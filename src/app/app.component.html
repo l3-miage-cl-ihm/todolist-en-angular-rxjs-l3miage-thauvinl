@@ -1,1 +1,21 @@
-todolist ...
+<!-- <pre>
+    {{sigTDL()|json}}
+</pre> -->
+
+
+<h1></h1>
+Ajouter 
+<form (submit)="addToDo(newTodo.value)">
+    <input #newTodo />
+    <input type="submit" value="Ajouter"/>
+</form>
+<ul>
+    <li *ngFor="let task of sigTDL().items">
+        <input type="checkbox" [checked]="task.done" (change)="checkTask(taskChecked.checked, task)" #taskChecked/>
+        <form (submit)="addToDo(newLabel.value)">
+            <input type="text" name="newLabel" [value]="task.label" #newLabel (change)="updateTaskLabel(newLabel.value, task)"/>
+        </form>
+        <input type="submit" value="Valider"/>
+        <input type="button" value="Supprimer" (click)="removeTask(task)"/>
+    </li>
+</ul>
