@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
 import { TodoItem } from '../data/todolist';
 
 interface ItemState {
@@ -16,6 +16,7 @@ export class TodoItemComponent {
   public sigItemState;
 
   private _sigItem = signal<TodoItem>(initialItem);
+  protected _sigEditing = signal<boolean>(true);
 
   @Input({required:true})
     get item() {return this._sigItem()}
@@ -23,14 +24,29 @@ export class TodoItemComponent {
   @Output() update = new EventEmitter<Partial<TodoItem>>();
   @Output() delete = new EventEmitter<TodoItem>();
 
-  
 
   constructor(){
-    this.sigItemState ={
-      item : this.item,
-      
-    }
-
+    this.sigItemState = computed<ItemState> (()=> {
+      return {
+        item: this.item,
+        editing: this.editing
+      }
+    })
+  }
+  protected get editing() : boolean{
+    return this._sigEditing();
+  }
+  toggleTask(done:boolean){
+    this.update.emit({
+      ...this.item,
+      done
+    });
+  }
+  changeLabel(label:string){
+    this.update.emit({
+      ...this.item,
+      label
+    })
   }
 
 }

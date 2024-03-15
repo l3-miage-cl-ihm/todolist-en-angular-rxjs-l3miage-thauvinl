@@ -23,10 +23,10 @@ export class TodoListComponent {
   public sigTDLState;
 
   private _sigTdl = signal<TodoList>(initialTDL);
-  @Input({ required: true }) 
+  @Input({ required: true })
     get tdl() {return this._sigTdl()}
     set tdl(v: TodoList) {this._sigTdl.set(v)}
-    
+
   @Output() appendItems = new EventEmitter<NonEmptyList<string>>();
   @Output() deleteItems = new EventEmitter<NonEmptyList<TodoItem>>();
   @Output() updateItems = new EventEmitter<readonly [Partial<TodoItem>, NonEmptyList<TodoItem>]>();
@@ -35,7 +35,7 @@ export class TodoListComponent {
   readonly filterDone: FCT_FILTER = item => item.done;
   readonly filterUndone: FCT_FILTER = item => !item.done;
 
-  public currentfilter = signal<FCT_FILTER>(this.filterDone);
+  public currentfilter = signal<FCT_FILTER>(this.filterAll);
   readonly itemsFiltered = computed<readonly TodoItem[]>(
     () => this.tdl.items.filter(this.currentfilter())
   );
