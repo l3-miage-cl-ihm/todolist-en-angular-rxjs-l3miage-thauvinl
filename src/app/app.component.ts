@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/c
 import { TodolistServiceInterface } from './data/todo-list.interface';
 import { TodoListService } from './todo-list.service';
 import { TodoItem, TodoList, initialTDL, updateItems } from './data/todolist';
+import { NonEmptyList } from './data/utils';
+import { elementAt } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -10,29 +12,21 @@ import { TodoItem, TodoList, initialTDL, updateItems } from './data/todolist';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  readonly sigTDL =  computed<TodoList>(()=>{return this.toDoListService.sigTDL()});
+  readonly sigTDL = computed<TodoList>(() => { return this.toDoListService.sigTDL() });
 
-  constructor(private toDoListService : TodoListService){
-    
+  constructor(private toDoListService: TodoListService) {
+
   }
-  addToDo(s:string){
+  addToDo(s: NonEmptyList<string>) {
     console.log([s]);
-    this.toDoListService.appendItems([s]);
+    this.toDoListService.appendItems(s);
   }
-  checkTask(b:boolean, t: TodoItem){
-    this.toDoListService.updateItems({
-      done: b
-    },
-    [t])
+
+  updateTask(l: readonly [Partial<TodoItem>, NonEmptyList<TodoItem>]) {
+    this.toDoListService.updateItems(l[0], l[1]);
   }
-  updateTaskLabel(s:string, t:TodoItem){
-    this.toDoListService.updateItems({
-      label: s
-    },
-    [t])
+  removeTask(t: NonEmptyList<TodoItem>) {
+    this.toDoListService.deleteItems(t);
   }
-  removeTask(t:TodoItem){
-    this.toDoListService.deleteItems([t]);
-  }
-  
+
 }

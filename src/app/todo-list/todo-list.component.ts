@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Signal, Component, Input, signal, Output, EventEmitter, computed } from '@angular/core';
 import { TodoItem, TodoList, initialTDL } from '../data/todolist';
-import { NonEmptyList } from '../data/utils';
+import { NonEmptyList, nonEmptyList } from '../data/utils';
 
 interface TdlState {
   readonly tdl: TodoList;
@@ -21,45 +21,52 @@ type FCT_FILTER = (item: TodoItem) => boolean;
 })
 export class TodoListComponent {
   public sigTDLState;
-  
 
-  @Input() tdl : TodoList = initialTDL;
+  private _sigTdl = signal<TodoList>(initialTDL);
+  @Input({ required: true }) 
+    get tdl() {return this._sigTdl()}
+    set tdl(v: TodoList) {this._sigTdl.set(v)}
+    
   @Output() appendItems = new EventEmitter<NonEmptyList<string>>();
   @Output() deleteItems = new EventEmitter<NonEmptyList<TodoItem>>();
   @Output() updateItems = new EventEmitter<readonly [Partial<TodoItem>, NonEmptyList<TodoItem>]>();
 
-  readonly filterAll : FCT_FILTER = (item : TodoItem)=>{
-    return true;
-  }
+  readonly filterAll: FCT_FILTER = () => true
+  readonly filterDone: FCT_FILTER = item => item.done;
+  readonly filterUndone: FCT_FILTER = item => !item.done;
 
-  readonly filterDone : FCT_FILTER = (item : TodoItem)=>{
-    return item.done;
-  }
+  public currentfilter = signal<FCT_FILTER>(this.filterDone);
+  readonly itemsFiltered = computed<readonly TodoItem[]>(
+    () => this.tdl.items.filter(this.currentfilter())
+  );
 
-  readonly filterUndone : FCT_FILTER = (item : TodoItem)=>{
-    return !item.done;
-  }
-
-  private _currentfilter = signal<FCT_FILTER>(this.filterAll);
-  readonly itemsFiltered = signal<readonly TodoItem[]>(this.tdl.items.filter(this._currentfilter));
-  
 
 
   //return this.tdl.items.filter(this.sigTDLState().currentFilter)
-  constructor(){
-    this.sigTDLState= computed<TdlState>(()=>{
+  constructor() {
+    this.sigTDLState = computed<TdlState>(() => {
       return {
-        tdl : this.tdl,
-        nbItemsLeft : this.nbItemsRemaining(),
-        isAllDone : (this.nbItemsRemaining()===0),
-        currentFilter : this._currentfilter(),
-        filteredItems : this.itemsFiltered()
+        tdl: this.tdl,
+        nbItemsLeft: this.nbItemsRemaining(),
+        isAllDone: (this.nbItemsRemaining() === 0),
+        currentFilter: this.currentfilter(),
+        filteredItems: this.itemsFiltered()
       }
     })
   }
 
-  nbItemsRemaining(){
-    return this.tdl.items.reduce((acc, val)=> !val.done? acc+1 : acc, 0);
+  nbItemsRemaining() {
+    return this.tdl.items.reduce((acc, val) => !val.done ? acc + 1 : acc, 0);
+  }
+
+  toggleAllTasks(done: boolean) {
+    const items = this.tdl.items;
+    if (nonEmptyList(items)) {
+      this.updateItems.emit([
+        { done },
+        items
+      ])
+    }
   }
 
 

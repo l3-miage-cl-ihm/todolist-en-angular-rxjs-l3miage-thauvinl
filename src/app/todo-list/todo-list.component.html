@@ -1,38 +1,38 @@
 <section class="todoapp">
-    <header class="header">
-      <h1></h1>
-      <form>
-        <input  name        = "newTodoInput"
-                class       = "new-todo"
-                placeholder = "Que faire?"
-                autofocus #lab/>
-      </form>
-    </header>
-    <section class="main">
-      <input  class="toggle-all"
-              type="checkbox"
-              name="toggleAll"
-      />
-      <label for="toggleAll">Mark all as complete</label>
-      <ul class="todo-list" >
-        <li *ngFor="let task of tdl">
-            <!-- Chaque li devra contenir un composant Item -->
-        </li>
-      </ul>
-    </section>
-    <footer class="footer">
-      <span class="todo-count"><strong></strong> restantes</span>
-      <ul class="filters">
-        <li>
-          <a class="filterAll">Tous</a>
-        </li>
-        <li>
-          <a class="filterActives">Actifs</a>
-        </li>
-        <li>
-          <a class="filterCompleted">Complétés</a>
-        </li>
-      </ul>
-      <button class="clear-completed">Supprimer cochées</button>
-    </footer>
+  <header class="header">
+    <h1></h1>
+    <form (submit)="appendItems.emit([lab.value])">
+      <input name="newTodoInput" class="new-todo" placeholder="Que faire?" autofocus #lab />
+    </form>
+  </header>
+  <section class="main">
+    <input class="toggle-all" [ngModel]="this.sigTDLState().isAllDone" (ngModelChange)="toggleAllTasks(!this.sigTDLState().isAllDone)" type="checkbox" name="toggleAll" />
+    <label for="toggleAll" *ngIf="!this.sigTDLState().isAllDone">Mark all as complete</label>
+    <ul class="todo-list">
+      <li *ngFor="let task of sigTDLState().filteredItems">
+        <app-todo-item [item]="task"></app-todo-item>
+      </li>
+    </ul>
   </section>
+  <footer class="footer">
+    <span class="todo-count"><strong>{{this.sigTDLState().nbItemsLeft}}</strong> restantes</span>
+    <ul class="filters">
+      <li>
+        <a class="filterAll" (click)="this.currentfilter.set(filterAll)" [ngClass]="{'selected': currentfilter()==filterAll}">Tous</a>
+      </li>
+      <li>
+        <a class="filterActives" (click)="this.currentfilter.set(filterUndone) " [ngClass]="{'selected': currentfilter()==filterUndone}">Actifs</a>
+      </li>
+      <li>
+        <a class="filterCompleted" (click)="this.currentfilter.set(filterDone)" [ngClass]="{'selected': currentfilter()==filterDone}">Complétés</a>
+      </li>
+    </ul>
+    <div [ngClass]="{'clear-completed' : !this.sigTDLState().isAllDone}">
+        <button>Supprimer cochées</button>
+    </div>
+
+  </footer>
+</section>
+<pre>
+  {{sigTDLState()|json}}
+</pre>
