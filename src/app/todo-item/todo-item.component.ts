@@ -16,7 +16,8 @@ export class TodoItemComponent {
   public sigItemState;
 
   private _sigItem = signal<TodoItem>(initialItem);
-  protected _sigEditing = signal<boolean>(true);
+  protected _sigEditing = signal<boolean>(false);
+
 
   @Input({required:true})
     get item() {return this._sigItem()}

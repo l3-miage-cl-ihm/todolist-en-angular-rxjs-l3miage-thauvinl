@@ -68,6 +68,15 @@ export class TodoListComponent {
       ])
     }
   }
+  updateTasks(p:Partial<TodoItem>,t: NonEmptyList<TodoItem>){
+    const items = this.tdl.items;
+    if(nonEmptyList(items)){
+      this.updateItems.emit([p,t])
+    }
+  }
+  deleteTasks(t:TodoItem){
+    this.deleteItems.emit([t]);
+  }
 
 
 }

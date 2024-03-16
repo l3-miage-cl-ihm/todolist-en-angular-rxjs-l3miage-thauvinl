@@ -5,7 +5,7 @@
             type		    = "checkbox"
             name            = "done"
     />
-    <label class="texte">
+    <label class="texte" (dblclick)="this._sigEditing.set(true)">
         {{this.sigItemState().item.label}}
     </label>
     <button class="destroy" (click)="this.deleteTask()"></button>

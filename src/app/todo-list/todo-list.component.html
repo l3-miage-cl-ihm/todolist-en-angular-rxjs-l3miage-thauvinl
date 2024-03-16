@@ -11,8 +11,8 @@
     <ul class="todo-list">
       <li *ngFor="let task of sigTDLState().filteredItems" [ngClass]="{'editing' :t.sigItemState().editing}">
         <app-todo-item  #t [item]="task"
-                        (update)="this.updateItems"
-                        (delete)="this.deleteItems"></app-todo-item>
+                        (update)="this.updateTasks($event, [task])"
+                        (delete)="this.deleteTasks($event)"></app-todo-item>
       </li>
     </ul>
   </section>
