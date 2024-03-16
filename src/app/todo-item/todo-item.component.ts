@@ -42,6 +42,9 @@ export class TodoItemComponent {
       done
     });
   }
+  deleteTask(){
+    this.delete.emit(this.sigItemState().item);
+  }
   changeLabel(label:string){
     this.update.emit({
       ...this.item,

@@ -8,7 +8,7 @@
     <label class="texte">
         {{this.sigItemState().item.label}}
     </label>
-    <button class="destroy" (click)="this.delete.emit(this.sigItemState().item)"></button>
+    <button class="destroy" (click)="this.deleteTask()"></button>
   </div>
   <form (submit)="changeLabel(newTextInput.value)">
     <input  #newTextInput
