@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --base-href /l3m-2023-2024-angular-todolist/",
+    "build": "ng build --base-href /todolist-en-angular-rxjs-l3miage-thauvinl/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
