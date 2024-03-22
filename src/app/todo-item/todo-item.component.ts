@@ -57,11 +57,9 @@ export class TodoItemComponent implements AfterViewChecked{
   deleteTask(){
     this.delete.emit(this.sigItemState().item);
   }
-  changeLabel(label:string){
-    this.update.emit({
-      ...this.item,
-      label
-    })
+  changeLabel(label: string) {
+    this._sigEditing.set(false);
+    this.update.emit( {label} )
   }
 
   ngAfterViewChecked(): void {

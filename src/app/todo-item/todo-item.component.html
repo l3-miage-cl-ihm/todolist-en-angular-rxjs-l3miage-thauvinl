@@ -1,19 +1,20 @@
 <div class="view">
     <input 	class		    = "toggle"
-            [ngModel]="this.sigItemState().item.done"
-            (ngModelChange)="toggleTask(!this.sigItemState().item.done)"
+            [ngModel]="sigItemState().item.done"
+            (ngModelChange)="toggleTask(!sigItemState().item.done)"
             type		    = "checkbox"
             name            = "done"
     />
-    <label class="texte" (dblclick)="this._sigEditing.set(true)">
-        {{this.sigItemState().item.label}}
+    <label class="texte" (dblclick)="_sigEditing.set(true)">
+        {{sigItemState().item.label}}
     </label>
-    <button class="destroy" (click)="this.deleteTask()"></button>
+    <button class="destroy" (click)="deleteTask()"></button>
   </div>
   <form (submit)="changeLabel(newTextInput.value)">
     <input  #newTextInput
             name      = "newTextInput"
             class     = "edit"
-            [ngModel]="this.sigItemState().item.label"
+            (blur) = "changeLabel(newTextInput.value)"
+            [ngModel]="sigItemState().item.label"
             />
   </form>

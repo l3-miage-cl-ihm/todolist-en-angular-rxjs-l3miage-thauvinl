@@ -18,9 +18,9 @@ export class AppComponent {
   constructor(private toDoListService: TodoListService) {
 
   }
-  addToDo(s: NonEmptyList<string>) {
-    console.log([s]);
-    this.toDoListService.appendItems(s);
+  addToDo(L: NonEmptyList<string>) {
+    console.log([L]);
+    this.toDoListService.appendItems(L);
   }
 
   updateTask(l: readonly [Partial<TodoItem>, NonEmptyList<TodoItem>]) {

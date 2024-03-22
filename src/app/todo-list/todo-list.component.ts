@@ -20,12 +20,12 @@ type FCT_FILTER = (item: TodoItem) => boolean;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TodoListComponent {
-  public sigTDLState;
+  public readonly sigTDLState: Signal<TdlState>;
 
   private _sigTdl = signal<TodoList>(initialTDL);
   @Input({ required: true })
-  get tdl() { return this._sigTdl() }
-  set tdl(v: TodoList) { this._sigTdl.set(v) }
+    get tdl() { return this._sigTdl() }
+    set tdl(v: TodoList) { this._sigTdl.set(v) }
 
   @Output() appendItems = new EventEmitter<NonEmptyList<string>>();
   @Output() deleteItems = new EventEmitter<NonEmptyList<TodoItem>>();
@@ -36,23 +36,21 @@ export class TodoListComponent {
   readonly filterUndone: FCT_FILTER = item => !item.done;
 
   public currentfilter = signal<FCT_FILTER> (this.filterAll);
-  readonly itemsFiltered = computed<readonly TodoItem[]>(
-    () => this.tdl.items.filter(this.currentfilter())
-  );
 
   constructor() {
     this.sigTDLState = computed<TdlState>(() => {
+      const nbItemsLeft = this.nbItemsRemaining()
       return {
         tdl: this.tdl,
-        nbItemsLeft: this.nbItemsRemaining(),
-        isAllDone: (this.nbItemsRemaining() === 0),
+        nbItemsLeft,
+        isAllDone: nbItemsLeft === 0,
         currentFilter: this.currentfilter(),
-        filteredItems: this.itemsFiltered()
+        filteredItems: this.tdl.items.filter( this.currentfilter() )
       }
     })
   }
 
-  nbItemsRemaining() {
+  private nbItemsRemaining() {
     return this.tdl.items.reduce((acc, val) => !val.done ? acc + 1 : acc, 0);
   }
 

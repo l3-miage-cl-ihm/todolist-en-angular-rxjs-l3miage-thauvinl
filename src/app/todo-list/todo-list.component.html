@@ -1,18 +1,18 @@
 <section class="todoapp">
   <header class="header">
-    <h1></h1>
-    <form (submit)="appendItems.emit([lab.value])">
+    <h1>{{tdl.title}}</h1>
+    <form (submit)="appendItems.emit([lab.value]); lab.value='' ">
       <input name="newTodoInput" class="new-todo" placeholder="Que faire?" autofocus #lab />
     </form>
   </header>
   <section class="main">
-    <input class="toggle-all" [ngModel]="this.sigTDLState().isAllDone" (ngModelChange)="toggleAllTasks(!this.sigTDLState().isAllDone)" type="checkbox" name="toggleAll" />
+    <input class="toggle-all" [ngModel]="sigTDLState().isAllDone" (ngModelChange)="toggleAllTasks(!this.sigTDLState().isAllDone)" type="checkbox" name="toggleAll" />
     <label for="toggleAll" *ngIf="!this.sigTDLState().isAllDone">Mark all as complete</label>
     <ul class="todo-list">
       <li *ngFor="let task of sigTDLState().filteredItems" [ngClass]="{'editing' :t.editing}">
         <app-todo-item  #t [item]="task"
-                        (update)="this.updateTasks($event, [task])"
-                        (delete)="this.deleteTasks($event)"></app-todo-item>
+                        (update)="updateTasks($event, [task])"
+                        (delete)="deleteTasks($event)"></app-todo-item>
       </li>
     </ul>
   </section>
@@ -34,7 +34,7 @@
     </div>
   </footer>
 </section>
-<pre>
+<!-- <pre>
   {{currentfilter()|json}}
   {{sigTDLState()|json}}
-</pre>
+</pre> -->
