@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
 import { TodoItem } from '../data/todolist';
+import { Subject } from 'rxjs';
 
 interface ItemState {
   readonly item: TodoItem;
@@ -18,13 +19,13 @@ export class TodoItemComponent {
   private _sigItem = signal<TodoItem>(initialItem);
   protected _sigEditing = signal<boolean>(false);
 
+  //private _viewChecked = new Subject<void> ();
 
   @Input({required:true})
     get item() {return this._sigItem()}
     set item(v:TodoItem) {this._sigItem.set(v)}
   @Output() update = new EventEmitter<Partial<TodoItem>>();
   @Output() delete = new EventEmitter<TodoItem>();
-
 
   constructor(){
     this.sigItemState = computed<ItemState> (()=> {
@@ -34,7 +35,7 @@ export class TodoItemComponent {
       }
     })
   }
-  protected get editing() : boolean{
+  get editing() : boolean{
     return this._sigEditing();
   }
   toggleTask(done:boolean){
