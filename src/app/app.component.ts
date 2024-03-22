@@ -3,7 +3,7 @@ import { TodolistServiceInterface } from './data/todo-list.interface';
 import { TodoListService } from './todo-list.service';
 import { TodoItem, TodoList, initialTDL, updateItems } from './data/todolist';
 import { NonEmptyList } from './data/utils';
-import { elementAt } from 'rxjs';
+import { elementAt, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +13,7 @@ import { elementAt } from 'rxjs';
 })
 export class AppComponent {
   readonly sigTDL = computed<TodoList>(() => { return this.toDoListService.sigTDL() });
+  
 
   constructor(private toDoListService: TodoListService) {
 

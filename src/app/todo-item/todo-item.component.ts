@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
-import { TodoItem } from '../data/todolist';
-import { Subject } from 'rxjs';
-
+import { AfterViewChecked, ChangeDetectionStrategy, Component, EventEmitter, Input, Output, Signal, computed, signal } from '@angular/core';
+import { appendItems, TodoItem } from '../data/todolist';
+import { bufferCount, filter, Subject, switchMap } from 'rxjs';
+import { toObservable } from "@angular/core/rxjs-interop"
 interface ItemState {
   readonly item: TodoItem;
   readonly editing: boolean; // true ssi l'utilisateur est en train d'éditer le label de la tâche
@@ -13,13 +13,14 @@ const initialItem : TodoItem = {uid : -1,label:"",done:false};
   styleUrls: ['./todo-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TodoItemComponent {
+export class TodoItemComponent implements AfterViewChecked{
   public sigItemState;
 
   private _sigItem = signal<TodoItem>(initialItem);
   protected _sigEditing = signal<boolean>(false);
 
-  //private _viewChecked = new Subject<void> ();
+  private _viewChecked = new Subject<void> ();
+  
 
   @Input({required:true})
     get item() {return this._sigItem()}
@@ -34,6 +35,15 @@ export class TodoItemComponent {
         editing: this.editing
       }
     })
+    const obs = toObservable(this.sigItemState);
+    const derniersEtats = obs.pipe(
+        bufferCount(2),
+        filter(
+          ([av,ap])=> !av.editing && ap.editing
+        ),
+        switchMap(()=>this._viewChecked)
+      ).subscribe(this._viewChecked);
+    
   }
   get editing() : boolean{
     return this._sigEditing();
@@ -53,5 +63,10 @@ export class TodoItemComponent {
       label
     })
   }
+
+  ngAfterViewChecked(): void {
+    this._viewChecked.next();
+  }
+
 
 }
